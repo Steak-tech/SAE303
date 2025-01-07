@@ -2,16 +2,20 @@ import Chart from 'chart.js/auto';
 import jsonData from '../data.json';
 
 (async function () {
-    // Récupérer les données pertinentes
+    // Récupérer les données 
     const tableData = jsonData.find(entry => entry.type === "table" && entry.name === "results")?.data || [];
 
 
 
+    //------------------------------------------------------------------------------------------------
+
+
+
+    //pie chart
     let tab = tableData.filter(row=>row.name ==='Picat')
     let tab2 =tableData.filter(row=>row.name ==='ACE')
     let tab3 =tableData.filter(row=>row.name ==='Fun-sCOP-cad')
     function quality(best){
-        let moyenne = []
         let temp_moy = 0
         let res_moy = 0
         let incr =0
@@ -26,6 +30,13 @@ import jsonData from '../data.json';
         return res_moy
     }
 
+
+
+    //------------------------------------------------------------------------------------------------
+
+
+    
+    //bar chart : nombre de problèmes résolus par solveur
     function compte(data) {
         const solveurs = {};
 
@@ -42,6 +53,21 @@ import jsonData from '../data.json';
         return solveurs;
     }
 
+    const satCounts = compte(tableData);
+    // Convertir l'objet en tableau de paires clé-valeur et trier par valeur décroissante
+    const sortedEntries = Object.entries(satCounts).sort((a, b) => b[1] - a[1]);
+
+    // Extraire les labels et les données triées
+    const sortedLabels = sortedEntries.map(entry => entry[0]);
+    const sortedData = sortedEntries.map(entry => entry[1]);
+
+
+
+    //------------------------------------------------------------------------------------------------
+
+
+
+    //bar chart : temps de résolution total des algorithmes (en secondes)
     // Fonction pour convertir les secondes en hh:mm:ss
     function convertToHHMMSS(seconds) {
         const hours = Math.floor(seconds / 3600);
@@ -53,43 +79,19 @@ import jsonData from '../data.json';
     // Fonction pour additionner tous les temps de chaque famille
     function difficulté(data) {
         const familles = {};
-
         data.forEach(row => {
-            // Initialiser la famille si pas encore enregistrée
             if (!familles[row.family]) {
                 familles[row.family] = 0;
             }
-
-            // Ajouter le temps à la famille correspondante
             familles[row.family] += parseFloat(row.time);
-        });
-
-        // Convertir les temps totaux en hh:mm:ss
-       
+        });       
         return familles;
     }
 
-
-    // Utiliser la fonction compte pour obtenir les données
-    const satCounts = compte(tableData);
-
-    // Convertir l'objet en tableau de paires clé-valeur et trier par valeur décroissante
-    const sortedEntries = Object.entries(satCounts).sort((a, b) => b[1] - a[1]);
-
-    // Extraire les labels et les données triées
-    const sortedLabels = sortedEntries.map(entry => entry[0]);
-    const sortedData = sortedEntries.map(entry => entry[1]);
-
-    // Utiliser la fonction difficulté pour obtenir les temps par famille
     const familyTimes = difficulté(tableData);
-    console.log(familyTimes);
-
-    const x = Object.entries(familyTimes);
+    const x = Object.entries(familyTimes).sort((a, b) => b[1] - a[1]);
     const familyNames = x.map(entry => entry[0]);
     const familyValues = x.map(entry => entry[1]);
-
-    console.log(familyValues);
-    console.log(familyNames);
 
     let familyhours = [];
 
@@ -97,12 +99,14 @@ import jsonData from '../data.json';
  
         familyhours[i] = convertToHHMMSS(familyValues[i]);
     }
-    console.log(familyhours);
 
 
     
+    //------------------------------------------------------------------------------------------------
 
-    // Créer le graphique
+
+
+    //bar chart : nombre de problèmes résolus par solveur
     new Chart(
         document.getElementById('acquisitions'),
         {
@@ -111,9 +115,9 @@ import jsonData from '../data.json';
                 labels: sortedLabels, // Les noms des solveurs triés
                 datasets: [
                     {
-                        label: 'Nombre de SAT', // Titre de la légende
+                        label: 'Nombre de problèmes résolus', 
                         data: sortedData, // Nombre de SAT par solveur trié
-                        backgroundColor: ['rgb(66, 60, 228)', 'rgb(51, 47, 173)', 'rgb(34, 31, 114)', 'rgb(25, 22, 84)'], // Couleur des barres
+                        backgroundColor: ['rgb(66, 60, 228)', 'rgb(51, 47, 173)', 'rgb(34, 31, 114)', 'rgb(25, 22, 84)'],
                     }
                 ]
             },
@@ -121,26 +125,32 @@ import jsonData from '../data.json';
                 plugins: {
                     title: {
                         display: true,
-                        text: 'Nombre de SAT par solveur' // Titre du graphique
+                        text: 'Nombre de problèmes résolus par solveur' 
                     },
                   
                 }
             }
         }
     );
+
+
+    
+    //------------------------------------------------------------------------------------------------
+
+
+
+    //bar chart : temps de résolution total des algorithmes (en secondes)
     new Chart(
         document.getElementById('acquisitions2'),
         {
             type: 'bar',
             data: {
-                labels: familyNames, // Les noms des solveurs triés
+                labels: familyNames, // Les noms des solveurs
                 datasets: [
                     {
-                        label: 'Problemes les plus durs a solver', // Titre de la légende
-                        data: familyValues, // Nombre de SAT par solveur trié
-                        backgroundColor: 'rgba(75, 192, 192, 0.5)', // Couleur des barres
-                        borderColor: 'rgba(75, 192, 192, 1)', // Bordure des barres
-                        borderWidth: 1
+                        label: 'Temps de résolution total des algorithmes (en secondes)',
+                        data: familyValues, // valeurs des temps de résolution en secondes
+                        backgroundColor: ['rgb(66, 60, 228)', 'rgb(51, 47, 173)', 'rgb(34, 31, 114)', 'rgb(25, 22, 84)'],         
                     }
                 ]
             },
@@ -148,7 +158,7 @@ import jsonData from '../data.json';
                 plugins: {
                     title: {
                         display: true,
-                        text: 'Problemes les plus durs a solver' // Titre du graphique
+                        text: 'Problemes les plus durs a résoudre' 
                     },   
                     tooltip: { 
                         callbacks: {
@@ -161,6 +171,14 @@ import jsonData from '../data.json';
             }
         }
     );
+
+
+
+    //------------------------------------------------------------------------------------------------
+
+
+
+    //pie chart
     new Chart(
         document.getElementById('best'),
         {
@@ -169,15 +187,8 @@ import jsonData from '../data.json';
                 labels: [tab[0].name, tab2[0].name, tab3[0].name], // Les noms des solveurs triés
                 datasets: [
                     {
-                        label: 'Temps moyen de résolution', // Titre de la légende
-                        data: [quality(tab), quality(tab2), quality(tab3)], // Nombre de SAT par solveur trié
-                        backgroundColor: [
-                            'rgb(255, 99, 132)',
-                            'rgb(54, 162, 235)',
-                            'rgb(255, 205, 86)'
-                        ], // Couleur des barres
-                        borderColor: 'black', // Bordure des barres
-                        borderWidth: 0.1
+                        data: [quality(tab), quality(tab2), quality(tab3)],
+                        backgroundColor: ['rgb(66, 60, 228)', 'rgb(51, 47, 173)', 'rgb(34, 31, 114)'],
                     }
                 ]
             },
@@ -185,11 +196,11 @@ import jsonData from '../data.json';
                 plugins: {
                     title: {
                         display: true,
-                        text: 'Temps de résolution moyen pour les trois meilleurs solveurs sur les problèmes où ils ont trouvé une solution' // Titre du graphique
+                        text: 'Lenteur moyenne des trois algorithmes ayant résolus le plus de problèmes'
                     },
                     subtitle : {
                         display: true,
-                        text: 'Plus une zone est grande, moins le solveur à été rapide'
+                        text: 'Plus une zone est grande, plus le solveur à été lent (en secondes)'
                     }
                 }
             }
@@ -197,4 +208,3 @@ import jsonData from '../data.json';
     );
 })();
 
-//test
