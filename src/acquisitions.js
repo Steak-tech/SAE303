@@ -24,8 +24,45 @@ import jsonData from '../data.json';
         return solveurs;
     }
 
+    // Fonction pour convertir les secondes en hh:mm:ss
+    function convertToHHMMSS(seconds) {
+        const hours = Math.floor(seconds / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    }
+
+    // Fonction pour additionner tous les temps de chaque famille
+    function difficulté(data) {
+        const familles = {};
+
+        data.forEach(row => {
+            // Initialiser la famille si pas encore enregistrée
+            if (!familles[row.family]) {
+                familles[row.family] = 0;
+            }
+
+            // Ajouter le temps à la famille correspondante
+            familles[row.family] += parseFloat(row.time);
+        });
+
+        // Convertir les temps totaux en hh:mm:ss
+        const famillesFormatted = {};
+        for (const family in familles) {
+            famillesFormatted[family] = convertToHHMMSS(familles[family]);
+        }
+
+        return famillesFormatted;
+    }
+    
+
     // Utiliser la fonction compte pour obtenir les données
     const satCounts = compte(tableData);
+
+    // Utiliser la fonction difficulté pour obtenir les temps par famille
+    const familyTimes = difficulté(tableData);
+
+    console.log(familyTimes);
 
     // Créer le graphique
     new Chart(
