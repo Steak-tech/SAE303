@@ -5,21 +5,39 @@ import jsonData from '../data.json';
     // Récupérer les données pertinentes
     const tableData = jsonData.find(entry => entry.type === "table" && entry.name === "results")?.data || [];
     
-    // Extraire les noms des solveurs et leurs temps
-    const labels = tableData.map(row => row.name);
-    const times = tableData.map(row => parseFloat(row.time)); // Convertir le temps en nombre
-    
+    // Fonction pour compter le nombre de SAT par solveur
+    function compte(data) {
+        const solveurs = {};
+        
+        data.forEach(row => {
+            // Initialiser le solveur si pas encore enregistré
+            if (!solveurs[row.name]) {
+                solveurs[row.name] = 0;
+            }
+            
+            // Incrémenter si le statut est "SAT"
+            if (row.status === "SAT" || row.status === "UNSAT") {
+                solveurs[row.name]++;
+            }
+        });
+
+        return solveurs;
+    }
+
+    // Utiliser la fonction compte pour obtenir les données
+    const satCounts = compte(tableData);
+
     // Créer le graphique
     new Chart(
         document.getElementById('acquisitions'),
         {
             type: 'bar',
             data: {
-                labels: labels, // Les noms des solveurs
+                labels: Object.keys(satCounts), // Les noms des solveurs
                 datasets: [
                     {
-                        label: 'Temps (s)', // Titre de la légende
-                        data: times, // Les temps associés
+                        label: 'Nombre de SAT', // Titre de la légende
+                        data: Object.values(satCounts), // Nombre de SAT par solveur
                         backgroundColor: 'rgba(75, 192, 192, 0.5)', // Couleur des barres
                         borderColor: 'rgba(75, 192, 192, 1)', // Bordure des barres
                         borderWidth: 1
@@ -30,7 +48,7 @@ import jsonData from '../data.json';
                 plugins: {
                     title: {
                         display: true,
-                        text: 'Temps de résolution par solveur' // Titre du graphique
+                        text: 'Nombre de SAT par solveur' // Titre du graphique
                     }
                 },
                 scales: {
