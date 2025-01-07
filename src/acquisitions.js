@@ -2,7 +2,7 @@ import Chart from 'chart.js/auto';
 import jsonData from '../data.json';
 
 (async function () {
-    // Récupérer les données 
+    // Récupérer les données
     const tableData = jsonData.find(entry => entry.type === "table" && entry.name === "results")?.data || [];
 
 
@@ -20,11 +20,8 @@ import jsonData from '../data.json';
         let res_moy = 0
         let incr =0
         for(let i=0;i<best.length;i++){
-            if (best[i].status != 'UNKNOWN') {
                 temp_moy = temp_moy + parseInt(best[i].time)
                 incr ++
-            }
-            else {}
         }
         res_moy = temp_moy / incr
         return res_moy
@@ -35,7 +32,7 @@ import jsonData from '../data.json';
     //------------------------------------------------------------------------------------------------
 
 
-    
+
     //bar chart : nombre de problèmes résolus par solveur
     function compte(data) {
         const solveurs = {};
@@ -84,7 +81,7 @@ import jsonData from '../data.json';
                 familles[row.family] = 0;
             }
             familles[row.family] += parseFloat(row.time);
-        });       
+        });
         return familles;
     }
 
@@ -101,7 +98,7 @@ import jsonData from '../data.json';
     }
 
 
-    
+
     //------------------------------------------------------------------------------------------------
 
 
@@ -115,7 +112,7 @@ import jsonData from '../data.json';
                 labels: sortedLabels, // Les noms des solveurs triés
                 datasets: [
                     {
-                        label: 'Nombre de problèmes résolus', 
+                        label: 'Nombre de problèmes résolus',
                         data: sortedData, // Nombre de SAT par solveur trié
                         backgroundColor: ['rgb(66, 60, 228)', 'rgb(51, 47, 173)', 'rgb(34, 31, 114)', 'rgb(25, 22, 84)'],
                     }
@@ -125,7 +122,7 @@ import jsonData from '../data.json';
                 plugins: {
                     title: {
                         display: true,
-                        text: 'Nombre de problèmes résolus par solveur' 
+                        text: 'Nombre de problèmes résolus par solveur'
                     },
                   
                 }
@@ -134,7 +131,7 @@ import jsonData from '../data.json';
     );
 
 
-    
+
     //------------------------------------------------------------------------------------------------
 
 
@@ -150,7 +147,7 @@ import jsonData from '../data.json';
                     {
                         label: 'Temps de résolution total des algorithmes (en secondes)',
                         data: familyValues, // valeurs des temps de résolution en secondes
-                        backgroundColor: ['rgb(66, 60, 228)', 'rgb(51, 47, 173)', 'rgb(34, 31, 114)', 'rgb(25, 22, 84)'],         
+                        backgroundColor: ['rgb(66, 60, 228)', 'rgb(51, 47, 173)', 'rgb(34, 31, 114)', 'rgb(25, 22, 84)'],
                     }
                 ]
             },
@@ -158,7 +155,7 @@ import jsonData from '../data.json';
                 plugins: {
                     title: {
                         display: true,
-                        text: 'Problemes les plus durs a résoudre' 
+                        text: 'Problemes les plus durs a résoudre'
                     },   
                     tooltip: { 
                         callbacks: {
@@ -206,5 +203,111 @@ import jsonData from '../data.json';
             }
         }
     );
+
+    let select = document.querySelector('.select');
+    let select2 = document.querySelector('.select2');
+    let chartInstance = null;
+
+// Remplir les listes déroulantes avec les labels triés
+    sortedLabels.forEach(label => {
+        select.innerHTML += `<option value="${label}">${label}</option>`;
+        select2.innerHTML += `<option value="${label}">${label}</option>`;
+    });
+
+// Écouteurs d'événements pour les sélections
+    select.addEventListener('change', e => {
+        updateChart(e.target.value, select2.value);  // Mettre à jour le graphique avec les deux sélections
+    });
+
+    select2.addEventListener('change', e => {
+        updateChart(select.value, e.target.value);  // Mettre à jour le graphique avec les deux sélections
+    });
+
+// Fonction pour filtrer les données et créer le graphique
+    function updateChart(value1, value2) {
+        if (!value1 || !value2) return;  // Vérifie que les deux valeurs sont sélectionnées
+
+        let tab1 = tableData.filter(row => row.name === value1);
+        let tab2 = tableData.filter(row => row.name === value2);
+        let data1 = []
+        let data2 = []
+        data1.push(quality(tab1));  // Données pour le premier solveur
+        data2.push(quality(tab2));  // Données pour le second solveur
+
+        if (chartInstance) {
+            chartInstance.destroy();
+        }
+
+        // Créer ou mettre à jour le graphique
+        chartInstance = new Chart(
+            document.getElementById('compare'),
+            {
+                type: 'bar',
+                data: {
+                    labels: ["Moyenne de temps"],  // Noms des catégories
+                    datasets: [
+                        {
+                            label: `Temps moyen de résolution pour ${value1}`,
+                            data: data1,
+                            backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                            borderColor: 'rgb(255, 99, 132)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: `Temps moyen de résolution pour ${value2}`,
+                            data: data2,
+                            backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                            borderColor: 'rgb(54, 162, 235)',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Comparaison des temps moyens de résolution'
+                        },
+                        subtitle: {
+                            display: true,
+                            text: 'Plus une barre est haute, plus le solveur a été lent à résoudre un problème'
+                        }
+                    },
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            }
+        );
+    }
+
+    // new Chart(
+    //     document.getElementById('acquisitions4'),
+    //     {
+    //         type: 'bar',
+    //         data: {
+    //             labels: solversEchecsOrdreLabels, // Les noms des solveurs triés
+    //             datasets: [
+    //                 {
+    //                     label: 'Nombre de UNKNOWN', // Titre de la légende
+    //                     data: solversEchecsOrdreData, // Nombre de SAT par solveur trié
+    //                     backgroundColor: ['rgb(66, 60, 228)', 'rgb(51, 47, 173)', 'rgb(34, 31, 114)', 'rgb(25, 22, 84)'], // Couleur des barres
+    //                 }
+    //             ]
+    //         },
+    //         options: {
+    //             plugins: {
+    //                 title: {
+    //                     display: true,
+    //                     text: 'Les solvers qui echouent le plus' // Titre du graphique
+    //                 },
+    //
+    //             }
+    //         }
+    //     }
+    // );
 })();
 
