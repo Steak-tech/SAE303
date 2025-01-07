@@ -5,17 +5,14 @@ import jsonData from '../data.json';
     // Récupérer les données pertinentes
     const tableData = jsonData.find(entry => entry.type === "table" && entry.name === "results")?.data || [];
     
-    // Fonction pour compter le nombre de SAT par solveur
     function compte(data) {
         const solveurs = {};
         
         data.forEach(row => {
-            // Initialiser le solveur si pas encore enregistré
             if (!solveurs[row.name]) {
                 solveurs[row.name] = 0;
             }
             
-            // Incrémenter si le statut est "SAT"
             if (row.status === "SAT" || row.status === "UNSAT") {
                 solveurs[row.name]++;
             }
@@ -58,6 +55,13 @@ import jsonData from '../data.json';
 
     // Utiliser la fonction compte pour obtenir les données
     const satCounts = compte(tableData);
+    
+    // Convertir l'objet en tableau de paires clé-valeur et trier par valeur décroissante
+    const sortedEntries = Object.entries(satCounts).sort((a, b) => b[1] - a[1]);
+
+    // Extraire les labels et les données triées
+    const sortedLabels = sortedEntries.map(entry => entry[0]);
+    const sortedData = sortedEntries.map(entry => entry[1]);
 
     // Utiliser la fonction difficulté pour obtenir les temps par famille
     const familyTimes = difficulté(tableData);
@@ -70,11 +74,11 @@ import jsonData from '../data.json';
         {
             type: 'bar',
             data: {
-                labels: Object.keys(satCounts), // Les noms des solveurs
+                labels: sortedLabels, // Les noms des solveurs triés
                 datasets: [
                     {
                         label: 'Nombre de SAT', // Titre de la légende
-                        data: Object.values(satCounts), // Nombre de SAT par solveur
+                        data: sortedData, // Nombre de SAT par solveur trié
                         backgroundColor: 'rgba(75, 192, 192, 0.5)', // Couleur des barres
                         borderColor: 'rgba(75, 192, 192, 1)', // Bordure des barres
                         borderWidth: 1
@@ -86,11 +90,6 @@ import jsonData from '../data.json';
                     title: {
                         display: true,
                         text: 'Nombre de SAT par solveur' // Titre du graphique
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true // Commencer l'axe Y à 0
                     }
                 }
             }
