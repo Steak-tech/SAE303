@@ -79,9 +79,7 @@ import jsonData from '../data.json';
                     {
                         label: 'Nombre de SAT', // Titre de la légende
                         data: sortedData, // Nombre de SAT par solveur trié
-                        backgroundColor: 'rgba(75, 192, 192, 0.5)', // Couleur des barres
-                        borderColor: 'rgba(75, 192, 192, 1)', // Bordure des barres
-                        borderWidth: 1
+                        backgroundColor: ['rgb(66, 60, 228)', 'rgb(51, 47, 173)', 'rgb(34, 31, 114)', 'rgb(25, 22, 84)'], // Couleur des barres
                     }
                 ]
             },
