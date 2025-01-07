@@ -23,7 +23,7 @@ import jsonData from '../data.json';
 
     // Utiliser la fonction compte pour obtenir les données
     const satCounts = compte(tableData);
-
+    
     // Convertir l'objet en tableau de paires clé-valeur et trier par valeur décroissante
     const sortedEntries = Object.entries(satCounts).sort((a, b) => b[1] - a[1]);
 
