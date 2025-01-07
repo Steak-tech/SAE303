@@ -124,7 +124,7 @@ import jsonData from '../data.json';
                         display: true,
                         text: 'Nombre de problèmes résolus par solveur',
                         font : {
-                            size: 16,
+                            size: 20,
                         }
                     },
                   
@@ -158,7 +158,10 @@ import jsonData from '../data.json';
                 plugins: {
                     title: {
                         display: true,
-                        text: 'Problèmes les plus durs a résoudre' 
+                        text: 'Problèmes les plus durs a résoudre',
+                        font : {
+                            size: 20,
+                        }
                     },   
                     tooltip: { 
                         callbacks: {
@@ -196,7 +199,10 @@ import jsonData from '../data.json';
                 plugins: {
                     title: {
                         display: true,
-                        text: 'Lenteur moyenne des trois algorithmes ayant résolus le plus de problèmes'
+                        text: 'Lenteur moyenne des trois algorithmes ayant résolus le plus de problèmes',
+                        font: {
+                            size: 20,
+                        }
                     },
                     subtitle : {
                         display: true,
@@ -252,15 +258,13 @@ import jsonData from '../data.json';
                         {
                             label: `Temps moyen de résolution pour ${value1}`,
                             data: data1,
-                            backgroundColor: 'rgba(255, 99, 132, 0.5)',
-                            borderColor: 'rgb(255, 99, 132)',
+                            backgroundColor: ['rgb(66, 60, 228)'],
                             borderWidth: 1
                         },
                         {
                             label: `Temps moyen de résolution pour ${value2}`,
                             data: data2,
-                            backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                            borderColor: 'rgb(54, 162, 235)',
+                            backgroundColor: ['rgb(25, 22, 84)'],
                             borderWidth: 1
                         }
                     ]
@@ -269,7 +273,10 @@ import jsonData from '../data.json';
                     plugins: {
                         title: {
                             display: true,
-                            text: 'Comparaison des temps moyens de résolution'
+                            text: 'Comparaison des temps moyens de résolution',
+                            font: {
+                                size: '20'
+                            }
                         },
                         subtitle: {
                             display: true,

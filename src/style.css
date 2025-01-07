@@ -124,3 +124,14 @@ body>div{
       background-size: 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%;
     }
   }
+
+  form {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 3rem;
+  }
+
+  form select {
+      margin: 1rem;
+  }
