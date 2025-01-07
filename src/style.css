@@ -1,0 +1,10 @@
+body {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+.solver {
+    display: flex;
+    width: 50%;
+    align-items: center;
+    height: 70vh;
+}
