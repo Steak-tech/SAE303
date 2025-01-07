@@ -44,12 +44,8 @@ import jsonData from '../data.json';
         });
 
         // Convertir les temps totaux en hh:mm:ss
-        const famillesFormatted = {};
-        for (const family in familles) {
-            famillesFormatted[family] = convertToHHMMSS(familles[family]);
-        }
-
-        return famillesFormatted;
+       
+        return familles;
     }
     
 
@@ -65,8 +61,25 @@ import jsonData from '../data.json';
 
     // Utiliser la fonction difficulté pour obtenir les temps par famille
     const familyTimes = difficulté(tableData);
-
     console.log(familyTimes);
+
+    const x = Object.entries(familyTimes);
+    const familyNames = x.map(entry => entry[0]);
+    const familyValues = x.map(entry => entry[1]);
+
+    console.log(familyValues);
+    console.log(familyNames);
+
+    let familyhours = [];
+
+    for (let i = 0; i < familyValues.length; i++) {
+ 
+        familyhours[i] = convertToHHMMSS(familyValues[i]);
+    }
+    console.log(familyhours);
+
+
+    
 
     // Créer le graphique
     new Chart(
@@ -90,6 +103,40 @@ import jsonData from '../data.json';
                     title: {
                         display: true,
                         text: 'Nombre de SAT par solveur' // Titre du graphique
+                    },
+                  
+                }
+            }
+        }
+    );
+    new Chart(
+        document.getElementById('acquisitions2'),
+        {
+            type: 'bar',
+            data: {
+                labels: familyNames, // Les noms des solveurs triés
+                datasets: [
+                    {
+                        label: 'Problemes les plus durs a solver', // Titre de la légende
+                        data: familyValues, // Nombre de SAT par solveur trié
+                        backgroundColor: 'rgba(75, 192, 192, 0.5)', // Couleur des barres
+                        borderColor: 'rgba(75, 192, 192, 1)', // Bordure des barres
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Problemes les plus durs a solver' // Titre du graphique
+                    },   
+                    tooltip: { 
+                        callbacks: {
+                            label: function(context) {
+                                
+                            }
+                        }
                     }
                 }
             }
