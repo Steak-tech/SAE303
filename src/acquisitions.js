@@ -122,7 +122,10 @@ import jsonData from '../data.json';
                 plugins: {
                     title: {
                         display: true,
-                        text: 'Nombre de problèmes résolus par solveur'
+                        text: 'Nombre de problèmes résolus par solveur',
+                        font : {
+                            size: 16,
+                        }
                     },
                   
                 }
