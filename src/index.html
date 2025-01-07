@@ -5,10 +5,25 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<!-- <div style="width: 500px;"><canvas id="dimensions"></canvas></div><br/> -->
-<div class="solver"><canvas id="acquisitions"></canvas><canvas id="best"></canvas></div>
-<div style="width:100%;"><canvas id="acquisitions2"></canvas></div>
-<!-- <script type="module" src="dimensions.js"></script> -->
-<script type="module" src="acquisitions.js"></script>
+    <header>
+        <nav id="buttons">
+            <button class="button" id="pbBtn">Nombre de problèmes résolus par solveur</button>
+            <button class="button" id="pieBtn">Lenteur moyenne des algorithmes ayant résolus le plus de problèmes</button>
+            <button class="button" id="hardBtn">Problèmes les plus durs a résoudre</button>
+        </nav>
+    </header>
+    <div>
+        <div class="canvas" id="nb">
+            <canvas id="acquisitions"></canvas>
+        </div>
+        <div class="canvas" id="pie">
+            <canvas id="best"></canvas>
+        </div>
+        <div class="canvas" id="hard">
+            <canvas id="acquisitions2"></canvas>
+        </div>
+    </div>
+    <script type="module" src="browse.js"></script>
+    <script type="module" src="acquisitions.js"></script>
 </body>
 </html>

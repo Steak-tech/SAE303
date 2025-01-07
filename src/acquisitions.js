@@ -158,7 +158,7 @@ import jsonData from '../data.json';
                 plugins: {
                     title: {
                         display: true,
-                        text: 'Problemes les plus durs a résoudre' 
+                        text: 'Problèmes les plus durs a résoudre' 
                     },   
                     tooltip: { 
                         callbacks: {
